@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote of the Day Generator - Mr. Ali</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .creator {
+            color: #666;
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .quote-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .quote-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+            font-style: italic;
+            position: relative;
+        }
+
+        .quote-text::before {
+            content: '"';
+            font-size: 3rem;
+            color: #667eea;
+            position: absolute;
+            left: -20px;
+            top: -10px;
+            font-family: serif;
+        }
+
+        .quote-text::after {
+            content: '"';
+            font-size: 3rem;
+            color: #667eea;
+            position: absolute;
+            right: -20px;
+            bottom: -40px;
+            font-family: serif;
+        }
+
+        .quote-author {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .quote-author::before {
+            content: '— ';
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .category-selector {
+            margin: 20px 0;
+        }
+
+        .category-selector select {
+            padding: 10px 15px;
+            border-radius: 25px;
+            border: 2px solid #667eea;
+            background: white;
+            font-size: 1rem;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .category-selector select:focus {
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            
+            .quote-text::before,
+            .quote-text::after {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quote of the Day</h1>
+            <p class="creator">Created by <strong>Mr. Ali</strong></p>
+        </div>
+
+        <div class="category-selector">
+            <select id="categorySelect">
+                <option value="all">All Categories</option>
+                <option value="inspirational">Inspirational</option>
+                <option value="motivational">Motivational</option>
+                <option value="life">Life</option>
+                <option value="success">Success</option>
+                <option value="wisdom">Wisdom</option>
+            </select>
+        </div>
+
+        <div class="quote-card" id="quoteCard">
+            <div class="quote-text" id="quoteText">
+                Click the button below to get your daily dose of inspiration!
+            </div>
+            <div class="quote-author" id="quoteAuthor" style="display: none;">
+            </div>
+        </div>
+
+        <button class="btn" id="generateBtn" onclick="generateQuote()">
+            Generate New Quote
+        </button>
+
+        <div class="footer">
+            <p>Refresh your mind with wisdom • Project by Mr. Ali</p>
+        </div>
+    </div>
+
+    <script>
+        const quotes = {
+            inspirational: [
+                {
+                    text: "The only way to do great work is to love what you do.",
+                    author: "Steve Jobs"
+                },
+                {
+                    text: "Life is what happens to you while you're busy making other plans.",
+                    author: "John Lennon"
+                },
+                {
+                    text: "The future belongs to those who believe in the beauty of their dreams.",
+                    author: "Eleanor Roosevelt"
+                }
+            ],
+            motivational: [
+                {
+                    text: "It is during our darkest moments that we must focus to see the light.",
+                    author: "Aristotle"
+                },
+                {
+                    text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+                    author: "Winston Churchill"
+                },
+                {
+                    text: "The way to get started is to quit talking and begin doing.",
+                    author: "Walt Disney"
+                }
+            ],
+            life: [
+                {
+                    text: "In the end, we will remember not the words of our enemies, but the silence of our friends.",
+                    author: "Martin Luther King Jr."
+                },
+                {
+                    text: "Be yourself; everyone else is already taken.",
+                    author: "Oscar Wilde"
+                },
+                {
+                    text: "Life is really simple, but we insist on making it complicated.",
+                    author: "Confucius"
+                }
+            ],
+            success: [
+                {
+                    text: "Success is not the key to happiness. Happiness is the key to success.",
+                    author: "Albert Schweitzer"
+                },
+                {
+                    text: "Don't be afraid to give up the good to go for the great.",
+                    author: "John D. Rockefeller"
+                },
+                {
+                    text: "The only impossible journey is the one you never begin.",
+                    author: "Tony Robbins"
+                }
+            ],
+            wisdom: [
+                {
+                    text: "The only true wisdom is in knowing you know nothing.",
+                    author: "Socrates"
+                },
+                {
+                    text: "Yesterday is history, tomorrow is a mystery, today is a gift.",
+                    author: "Eleanor Roosevelt"
+                },
+                {
+                    text: "A wise man learns more from his enemies than a fool from his friends.",
+                    author: "Baltasar Gracián"
+                }
+            ]
+        };
+
+        let currentQuoteIndex = -1;
+        let currentCategory = 'all';
+
+        function generateQuote() {
+            const btn = document.getElementById('generateBtn');
+            const quoteCard = document.getElementById('quoteCard');
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            const categorySelect = document.getElementById('categorySelect');
+            
+            // Add loading state
+            btn.classList.add('loading');
+            btn.textContent = 'Generating...';
+            
+            setTimeout(() => {
+                currentCategory = categorySelect.value;
+                let selectedQuotes = [];
+                
+                if (currentCategory === 'all') {
+                    // Combine all quotes
+                    selectedQuotes = Object.values(quotes).flat();
+                } else {
+                    selectedQuotes = quotes[currentCategory] || [];
+                }
+                
+                // Get random quote (avoid repeating the same quote)
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * selectedQuotes.length);
+                } while (randomIndex === currentQuoteIndex && selectedQuotes.length > 1);
+                
+                currentQuoteIndex = randomIndex;
+                const selectedQuote = selectedQuotes[randomIndex];
+                
+                // Update UI with animation
+                quoteCard.classList.remove('fade-in');
+                
+                setTimeout(() => {
+                    quoteText.textContent = selectedQuote.text;
+                    quoteAuthor.textContent = selectedQuote.author;
+                    quoteAuthor.style.display = 'block';
+                    
+                    quoteCard.classList.add('fade-in');
+                    
+                    // Remove loading state
+                    btn.classList.remove('loading');
+                    btn.textContent = 'Generate New Quote';
+                }, 100);
+                
+            }, 800);
+        }
+
+        // Generate initial quote on page load
+        window.addEventListener('load', () => {
+            setTimeout(generateQuote, 500);
+        });
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                generateQuote();
+            }
+        });
+
+        // Add category change listener
+        document.getElementById('categorySelect').addEventListener('change', generateQuote);
+    </script>
+</body>
+</html>
